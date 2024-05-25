@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:foodie/screens/home_screen.dart';
+import 'package:foodie/screens/login.dart';
 
 class OnBoardingScreen extends StatefulWidget {
   const OnBoardingScreen({Key? key}) : super(key: key);
@@ -81,7 +81,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                   onPressed: () {
                     if (_pageIndex == data.length - 1) {
                       Navigator.of(context).pushReplacement(MaterialPageRoute(
-                          builder: (context) => const HomeScreen()));
+                          builder: (context) => LoginScreen()));
                     } else {
                       _pageController.nextPage(
                         duration: const Duration(milliseconds: 300),
@@ -113,8 +113,8 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                   ),
                 ),
                 onPressed: () {
-                  Navigator.of(context).pushReplacement(MaterialPageRoute(
-                      builder: (context) => const HomeScreen()));
+                  Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(builder: (context) => LoginScreen()));
                 },
                 child: const Text("Preskoči"),
               ),
