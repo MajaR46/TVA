@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_database/firebase_database.dart';
+
+//firebase baza
+FirebaseDatabase database = FirebaseDatabase.instance;
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
