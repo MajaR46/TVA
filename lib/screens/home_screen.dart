@@ -146,7 +146,6 @@ class LatestRecipesWidget extends StatelessWidget {
 }
 
 Widget _buildLatestRecipesList() {
-  // Get the box containing recipes
   Box<Recipe> recipeBox = Hive.box<Recipe>('recipes');
 
   return Expanded(
@@ -156,12 +155,11 @@ Widget _buildLatestRecipesList() {
         // Get the recipe at the current index
         Recipe recipe = recipeBox.getAt(index)!; // Add null check for safety
 
-        // Build a ListTile for each recipe
         return ListTile(
           title: Text(recipe.name),
           subtitle: Text(recipe.description),
           onTap: () {
-            // Navigate to RecipeDetailsScreen when a recipe is tapped
+            // TODO: Navigate to RecipeDetailsScreen when a recipe is tapped
           },
         );
       },

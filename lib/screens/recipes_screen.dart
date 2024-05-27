@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:foodie/models/recipe.dart';
 
+//TODO: separate file for adding recipe, nicer organization of files in project
 class RecipesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
