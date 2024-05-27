@@ -137,6 +137,9 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
   int _fats = 0;
   Category _category = Category.breakfast;
   Taste _taste = Taste.sweet;
+class AddRecipeScreen extends StatelessWidget {
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _descriptionController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -146,6 +149,7 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
       ),
       body: Padding(
         padding: EdgeInsets.all(16.0),
+
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -299,6 +303,26 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
               ),
             ],
           ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            TextField(
+              controller: _nameController,
+              decoration: InputDecoration(labelText: 'Name'),
+            ),
+            SizedBox(height: 16.0),
+            TextField(
+              controller: _descriptionController,
+              decoration: InputDecoration(labelText: 'Description'),
+            ),
+            SizedBox(height: 32.0),
+            ElevatedButton(
+              onPressed: () {
+                _addRecipe(context);
+              },
+              child: Text('Add Recipe'),
+            ),
+          ],
         ),
       ),
     );
@@ -335,6 +359,11 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
         category: _category,
         taste: _taste,
         authorEmail: 'author@example.com', // Assuming author's email is fixed
+
+    if (name.isNotEmpty && description.isNotEmpty) {
+      final Recipe newRecipe = Recipe(
+        name: name,
+        description: description,
       );
 
       Hive.box<Recipe>('recipes').add(newRecipe);
@@ -345,6 +374,10 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Please fill all required fields.'),
+      // Show error message if name or description is empty
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Please enter both name and description.'),
         ),
       );
     }

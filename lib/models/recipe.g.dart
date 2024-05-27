@@ -100,6 +100,7 @@ class IngredientAdapter extends TypeAdapter<Ingredient> {
       ..write(obj.name)
       ..writeByte(1)
       ..write(obj.amount);
+      ..write(obj.description);
   }
 
   @override
@@ -109,6 +110,7 @@ class IngredientAdapter extends TypeAdapter<Ingredient> {
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is IngredientAdapter &&
+      other is RecipeAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }
