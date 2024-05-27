@@ -13,7 +13,11 @@ void main() async {
       options: DefaultFirebaseOptions.currentPlatform,
     );
     await Hive.initFlutter();
+
+    // Register adapters for Recipe and Ingredient
     Hive.registerAdapter(RecipeAdapter());
+    Hive.registerAdapter(IngredientAdapter());
+
     await Hive.openBox<Recipe>('recipes');
     runApp(const MyApp());
     Fluttertoast.showToast(msg: "Database connected");
