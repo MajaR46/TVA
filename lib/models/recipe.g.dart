@@ -21,14 +21,14 @@ class RecipeAdapter extends TypeAdapter<Recipe> {
       description: fields[1] as String,
       steps: (fields[2] as List).cast<String>(),
       ingredients: (fields[3] as List).cast<Ingredient>(),
-      difficulty: fields[4] as Difficulty,
+      difficulty: Difficulty.values[fields[4] as int],
       timeOfMaking: fields[5] as int,
       kcal: fields[6] as int,
       protein: fields[7] as int,
       carbohydrates: fields[8] as int,
       fats: fields[9] as int,
-      category: fields[10] as Category,
-      taste: fields[11] as Taste,
+      category: Category.values[fields[10] as int],
+      taste: Taste.values[fields[11] as int],
       authorEmail: fields[12] as String,
     );
   }
