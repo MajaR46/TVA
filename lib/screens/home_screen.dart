@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:foodie/models/recipe.dart';
-import 'package:foodie/screens/recipes_screen.dart';
 import 'package:hive/hive.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '/components/menu.dart';
 
 // Firebase database instance
 final FirebaseDatabase database = FirebaseDatabase.instance;
+
+final userEmail = FirebaseAuth.instance.currentUser?.email;
 
 class HomeScreen extends StatelessWidget {
   @override

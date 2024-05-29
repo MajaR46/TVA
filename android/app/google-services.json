@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "109669668763",
+    "firebase_url": "https://foodie-7407d-default-rtdb.europe-west1.firebasedatabase.app",
     "project_id": "foodie-7407d",
     "storage_bucket": "foodie-7407d.appspot.com"
   },
@@ -12,7 +13,12 @@
           "package_name": "com.example.foodie"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "109669668763-djtp617ksggn8ttrv6rbcb5cj6msj2r2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyAdff9ahw8Nnx3i2hkBzP1f9Z1SWo2XJuU"
@@ -20,7 +26,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "109669668763-djtp617ksggn8ttrv6rbcb5cj6msj2r2.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "109669668763-tbbu460cckjlgehd9p0o4s9ibia2o75e.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.foodie"
+              }
+            }
+          ]
         }
       }
     }
