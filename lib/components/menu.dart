@@ -13,7 +13,7 @@ class MenuComponent extends StatelessWidget {
           BoxShadow(
             color: Colors.black.withOpacity(0.1),
             blurRadius: 6,
-            offset: Offset(0, 3),
+            offset: const Offset(0, 3),
           ),
         ],
       ),
@@ -35,7 +35,7 @@ class MenuComponent extends StatelessWidget {
           _buildMenuItem(Icons.person, 'Profil', () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => RecipesScreen()),
+              MaterialPageRoute(builder: (context) => const RecipesScreen()),
             );
           }),
         ],
@@ -50,10 +50,10 @@ class MenuComponent extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(icon, color: Colors.white),
-          SizedBox(height: 4),
+          const SizedBox(height: 4),
           Text(
             text,
-            style: TextStyle(color: Colors.white),
+            style: const TextStyle(color: Colors.white),
           ),
         ],
       ),

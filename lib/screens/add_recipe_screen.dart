@@ -14,10 +14,6 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _stepsController = TextEditingController();
-  final TextEditingController _ingredientsNameController =
-      TextEditingController();
-  final TextEditingController _ingredientsAmountController =
-      TextEditingController();
   Difficulty _difficulty = Difficulty.easy;
   int _timeOfMaking = 0;
   Category _category = Category.breakfast;
@@ -25,10 +21,28 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
 
   late DatabaseReference dbRef;
 
+  List<Map<String, String>> _ingredientsList = [];
+  List<Map<String, String>> _stepsList = [];
+
   @override
   void initState() {
     super.initState();
     dbRef = FirebaseDatabase.instance.ref().child('Recipes');
+  }
+
+  void _addToList() {
+    setState(() {
+      _stepsList.add({
+        'steps': _stepsController.text,
+      });
+      _stepsController.clear();
+      _ingredientsList.add({
+        'name': _ingredientsNameController.text,
+        'amount': _ingredientsAmountController.text,
+      });
+      _ingredientsNameController.clear();
+      _ingredientsAmountController.clear();
+    });
   }
 
   void saveRecipe() async {
@@ -37,18 +51,13 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
     });
 
     try {
-      // Fetch nutrition data for the main ingredient
       Nutrition nutrition = await fetchNutrition(_nameController.text);
 
-      // Prepare recipe data with fetched nutrition information
       Map<String, dynamic> recipeData = {
         'name': _nameController.text,
         'description': _descriptionController.text,
         'steps': _stepsController.text,
-        'ingredients': {
-          'name': _ingredientsNameController.text,
-          'amount': _ingredientsAmountController.text,
-        },
+        'ingredients': _ingredientsList,
         'difficulty': _difficulty.toString().split('.').last,
         'timeOfMaking': _timeOfMaking,
         'kcal': nutrition.calories,
@@ -62,7 +71,6 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
 
       await dbRef.push().set(recipeData);
 
-      // Navigate back after saving
       Navigator.pop(context);
     } catch (e) {
       setState(() {
@@ -77,6 +85,11 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
 
   bool _isLoading = false;
   String? _errorMessage;
+
+  final TextEditingController _ingredientsNameController =
+      TextEditingController();
+  final TextEditingController _ingredientsAmountController =
+      TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -100,9 +113,51 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
                 decoration: InputDecoration(labelText: 'Description'),
               ),
               SizedBox(height: 16.0),
-              TextField(
-                controller: _stepsController,
-                decoration: InputDecoration(labelText: 'Steps'),
+              ListView.builder(
+                shrinkWrap: true,
+                itemCount: _stepsList.length,
+                itemBuilder: (context, index) {
+                  return Row(
+                    children: [
+                      Expanded(
+                        child: Text(_stepsList[index]['steps'] ?? ''),
+                      )
+                    ],
+                  );
+                },
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _stepsController,
+                      decoration: InputDecoration(labelText: 'Step'),
+                    ),
+                  ),
+                  SizedBox(width: 16.0),
+                  ElevatedButton(
+                    onPressed: _addToList,
+                    child: Text('Add'),
+                  ),
+                ],
+              ),
+              SizedBox(height: 16.0),
+              ListView.builder(
+                shrinkWrap: true,
+                itemCount: _ingredientsList.length,
+                itemBuilder: (context, index) {
+                  return Row(
+                    children: [
+                      Expanded(
+                        child: Text(_ingredientsList[index]['name'] ?? ''),
+                      ),
+                      SizedBox(width: 16.0),
+                      Expanded(
+                        child: Text(_ingredientsList[index]['amount'] ?? ''),
+                      ),
+                    ],
+                  );
+                },
               ),
               SizedBox(height: 16.0),
               Row(
@@ -120,6 +175,11 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
                       decoration:
                           InputDecoration(labelText: 'Ingredient Amount'),
                     ),
+                  ),
+                  SizedBox(width: 16.0),
+                  ElevatedButton(
+                    onPressed: _addToList,
+                    child: Text('Add'),
                   ),
                 ],
               ),
