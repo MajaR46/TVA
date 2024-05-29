@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_database/firebase_database.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:foodie/models/recipe.dart';
 import 'package:hive/hive.dart';
 import '/components/menu.dart';
@@ -10,25 +8,25 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: Icon(Icons.account_circle_outlined),
-        title: Text('Živijo'),
+        leading: const Icon(Icons.account_circle_outlined),
+        title: const Text('Živijo'),
       ),
       body: Center(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             SearchWidget(),
-            SizedBox(height: 20),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            const SizedBox(height: 20),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.0),
               child: Text(
                 'Kategorije',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             CategoriesWidget(),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             LatestRecipesWidget(),
           ],
         ),
@@ -44,7 +42,7 @@ class SearchWidget extends StatefulWidget {
 }
 
 class _SearchWidgetState extends State<SearchWidget> {
-  TextEditingController _searchController = TextEditingController();
+  final TextEditingController _searchController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -57,9 +55,9 @@ class _SearchWidgetState extends State<SearchWidget> {
             decoration: InputDecoration(
               labelText: 'Išči',
               labelStyle: TextStyle(
-                color: Color(0xffF2F3F4).withOpacity(0.5),
+                color: const Color(0xffF2F3F4).withOpacity(0.5),
               ),
-              prefixIcon: Icon(Icons.search),
+              prefixIcon: const Icon(Icons.search),
               filled: true,
               fillColor: Colors.white.withOpacity(0.1),
               border: OutlineInputBorder(
@@ -83,8 +81,8 @@ class CategoriesWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16.0),
-      child: SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: const SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Row(
           children: [
@@ -110,7 +108,7 @@ class CategoryItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+      padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20.0),
         color: Colors.grey[300],
@@ -125,15 +123,15 @@ class LatestRecipesWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Expanded(
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 16.0),
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(
+            const Text(
               'Popularni recepti',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             _buildLatestRecipesList(),
           ],
         ),
@@ -149,8 +147,7 @@ Widget _buildLatestRecipesList() {
     child: ListView.builder(
       itemCount: recipeBox.length,
       itemBuilder: (BuildContext context, int index) {
-        // Get the recipe at the current index
-        Recipe recipe = recipeBox.getAt(index)!; // Add null check for safety
+        Recipe recipe = recipeBox.getAt(index)!;
 
         return ListTile(
           title: Text(recipe.name),
