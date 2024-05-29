@@ -1,8 +1,9 @@
-// add_recipe_screen.dart
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:foodie/models/recipe.dart';
+import 'package:foodie/models/nutrition.dart';
+import 'package:foodie/services/api_service.dart';
 
 class AddRecipeScreen extends StatefulWidget {
   @override
@@ -19,10 +20,6 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
       TextEditingController();
   Difficulty _difficulty = Difficulty.easy;
   int _timeOfMaking = 0;
-  int _kcal = 0;
-  int _protein = 0;
-  int _carbohydrates = 0;
-  int _fats = 0;
   Category _category = Category.breakfast;
   Taste _taste = Taste.sweet;
 
@@ -33,6 +30,53 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
     super.initState();
     dbRef = FirebaseDatabase.instance.ref().child('Recipes');
   }
+
+  void saveRecipe() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      // Fetch nutrition data for the main ingredient
+      Nutrition nutrition = await fetchNutrition(_nameController.text);
+
+      // Prepare recipe data with fetched nutrition information
+      Map<String, dynamic> recipeData = {
+        'name': _nameController.text,
+        'description': _descriptionController.text,
+        'steps': _stepsController.text,
+        'ingredients': {
+          'name': _ingredientsNameController.text,
+          'amount': _ingredientsAmountController.text,
+        },
+        'difficulty': _difficulty.toString().split('.').last,
+        'timeOfMaking': _timeOfMaking,
+        'kcal': nutrition.calories,
+        'protein': nutrition.proteinG,
+        'carbohydrates': nutrition.carbohydratesTotalG,
+        'fats': nutrition.fatTotalG,
+        'category': _category.toString().split('.').last,
+        'taste': _taste.toString().split('.').last,
+        'authorEmail': FirebaseAuth.instance.currentUser?.email ?? 'Unknown',
+      };
+
+      await dbRef.push().set(recipeData);
+
+      // Navigate back after saving
+      Navigator.pop(context);
+    } catch (e) {
+      setState(() {
+        _errorMessage = e.toString();
+      });
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  bool _isLoading = false;
+  String? _errorMessage;
 
   @override
   Widget build(BuildContext context) {
@@ -107,49 +151,11 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
                           labelText: 'Time of Making (minutes)'),
                     ),
                   ),
-                  SizedBox(width: 16.0),
-                  Expanded(
-                    child: TextField(
-                      keyboardType: TextInputType.number,
-                      onChanged: (value) => _kcal = int.tryParse(value) ?? 0,
-                      decoration: InputDecoration(labelText: 'Kcal'),
-                    ),
-                  ),
                 ],
               ),
               SizedBox(height: 16.0),
               Row(
                 children: [
-                  Expanded(
-                    child: TextField(
-                      keyboardType: TextInputType.number,
-                      onChanged: (value) => _protein = int.tryParse(value) ?? 0,
-                      decoration: InputDecoration(labelText: 'Protein (grams)'),
-                    ),
-                  ),
-                  SizedBox(width: 16.0),
-                  Expanded(
-                    child: TextField(
-                      keyboardType: TextInputType.number,
-                      onChanged: (value) =>
-                          _carbohydrates = int.tryParse(value) ?? 0,
-                      decoration:
-                          InputDecoration(labelText: 'Carbohydrates (grams)'),
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 16.0),
-              Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      keyboardType: TextInputType.number,
-                      onChanged: (value) => _fats = int.tryParse(value) ?? 0,
-                      decoration: InputDecoration(labelText: 'Fats (grams)'),
-                    ),
-                  ),
-                  SizedBox(width: 16.0),
                   Expanded(
                     child: DropdownButtonFormField<Category>(
                       value: _category,
@@ -188,33 +194,18 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
               ),
               SizedBox(height: 32.0),
               ElevatedButton(
-                onPressed: () {
-                  Map<String, dynamic> recipeData = {
-                    'name': _nameController.text,
-                    'description': _descriptionController.text,
-                    'steps': _stepsController.text,
-                    'ingredients': {
-                      'name': _ingredientsNameController.text,
-                      'amount': _ingredientsAmountController.text,
-                    },
-                    'difficulty': _difficulty.toString().split('.').last,
-                    'timeOfMaking': _timeOfMaking,
-                    'kcal': _kcal,
-                    'protein': _protein,
-                    'carbohydrates': _carbohydrates,
-                    'fats': _fats,
-                    'category': _category.toString().split('.').last,
-                    'taste': _taste.toString().split('.').last,
-                    'authorEmail':
-                        FirebaseAuth.instance.currentUser?.email ?? 'Unknown',
-                  };
-
-                  dbRef.push().set(recipeData).then((_) {
-                    Navigator.pop(context);
-                  });
-                },
-                child: Text('Add Recipe'),
+                onPressed: _isLoading ? null : saveRecipe,
+                child: _isLoading
+                    ? CircularProgressIndicator()
+                    : Text('Add Recipe'),
               ),
+              if (_errorMessage != null) ...[
+                SizedBox(height: 16.0),
+                Text(
+                  _errorMessage!,
+                  style: TextStyle(color: Colors.red),
+                ),
+              ],
             ],
           ),
         ),
