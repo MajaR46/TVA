@@ -1,14 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:foodie/models/recipe.dart';
 import 'package:hive/hive.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import '/components/menu.dart';
-
-// Firebase database instance
-final FirebaseDatabase database = FirebaseDatabase.instance;
-
-final userEmail = FirebaseAuth.instance.currentUser?.email;
 
 class HomeScreen extends StatelessWidget {
   @override
@@ -53,33 +48,33 @@ class _SearchWidgetState extends State<SearchWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      child: TextField(
-        controller: _searchController,
-        decoration: InputDecoration(
-          labelText: 'Išči',
-          labelStyle: TextStyle(
-            color: Color(0xffF2F3F4).withOpacity(0.5),
-          ),
-          prefixIcon: Icon(Icons.search),
-          filled: true,
-          fillColor: Colors.white.withOpacity(0.1),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12.0),
-            borderSide: BorderSide.none,
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10.0),
-            borderSide: BorderSide.none,
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: TextField(
+            controller: _searchController,
+            decoration: InputDecoration(
+              labelText: 'Išči',
+              labelStyle: TextStyle(
+                color: Color(0xffF2F3F4).withOpacity(0.5),
+              ),
+              prefixIcon: Icon(Icons.search),
+              filled: true,
+              fillColor: Colors.white.withOpacity(0.1),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12.0),
+                borderSide: BorderSide.none,
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10.0),
+                borderSide: BorderSide.none,
+              ),
+            ),
+            onSubmitted: (value) {},
           ),
         ),
-        onChanged: (value) {
-          setState(() {
-            // Add your search logic here
-          });
-        },
-      ),
+      ],
     );
   }
 }

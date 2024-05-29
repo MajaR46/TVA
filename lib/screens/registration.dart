@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:foodie/auth_service.dart';
+import 'package:foodie/services/auth_service.dart';
 import 'package:foodie/screens/home_screen.dart';
 import 'package:foodie/screens/login.dart';
 
