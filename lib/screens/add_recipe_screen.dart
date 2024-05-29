@@ -1,4 +1,5 @@
 // add_recipe_screen.dart
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:foodie/models/recipe.dart';
@@ -204,9 +205,13 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
                     'fats': _fats,
                     'category': _category.toString().split('.').last,
                     'taste': _taste.toString().split('.').last,
+                    'authorEmail':
+                        FirebaseAuth.instance.currentUser?.email ?? 'Unknown',
                   };
 
-                  dbRef.push().set(recipeData);
+                  dbRef.push().set(recipeData).then((_) {
+                    Navigator.pop(context);
+                  });
                 },
                 child: Text('Add Recipe'),
               ),
