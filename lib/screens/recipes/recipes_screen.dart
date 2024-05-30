@@ -1,10 +1,8 @@
-// recipes_screen.dart
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:foodie/screens/recipes/add_recipe_screen.dart';
-import 'package:foodie/screens/recipes/update_recipe_screen.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import '/components/menu.dart';
+import 'recipe_form_screen.dart'; // Import the combined form screen
 
 class RecipesScreen extends StatefulWidget {
   const RecipesScreen({Key? key}) : super(key: key);
@@ -40,7 +38,9 @@ class _RecipesScreenState extends State<RecipesScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => UpdateRecipe(recipeKey: recipe['key']),
+                    builder: (_) => RecipeForm(
+                        recipeKey:
+                            recipe['key']), // Use RecipeForm for updating
                   ),
                 );
               },
@@ -87,7 +87,7 @@ class _RecipesScreenState extends State<RecipesScreen> {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (_) => AddRecipeScreen()),
+            MaterialPageRoute(builder: (_) => RecipeForm()),
           );
         },
         child: Icon(Icons.add),
