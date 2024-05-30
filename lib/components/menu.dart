@@ -2,38 +2,49 @@ import 'package:flutter/material.dart';
 import '/screens/home_screen.dart';
 import '../screens/recipes/recipes_screen.dart';
 
-class MenuComponent extends StatelessWidget {
+class MenuComponent extends StatefulWidget {
+  @override
+  _MenuComponentState createState() => _MenuComponentState();
+}
+
+class _MenuComponentState extends State<MenuComponent> {
+  int _activeIndex = 0;
+
   @override
   Widget build(BuildContext context) {
     return Container(
       height: 80,
       decoration: BoxDecoration(
-        color: Colors.blue,
+        color: Colors.white,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withOpacity(0.5),
             blurRadius: 6,
-            offset: const Offset(0, 3),
+            offset: const Offset(0, 5),
           ),
         ],
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          _buildMenuItem(Icons.home, 'Home', () {
-            Navigator.push(
+          _buildMenuItem(Icons.home, 'Home', 0, () {
+            _updateActiveIndex(0);
+            Navigator.pushReplacement(
               context,
               MaterialPageRoute(builder: (context) => HomeScreen()),
             );
           }),
-          _buildMenuItem(Icons.category, 'Categories', () {
+          _buildMenuItem(Icons.category, 'Categories', 1, () {
+            _updateActiveIndex(1);
             // Navigate to categories page
           }),
-          _buildMenuItem(Icons.search, 'Search', () {
+          _buildMenuItem(Icons.search, 'Search', 2, () {
+            _updateActiveIndex(2);
             // Navigate to search page
           }),
-          _buildMenuItem(Icons.person, 'Profile', () {
-            Navigator.push(
+          _buildMenuItem(Icons.person, 'Profile', 3, () {
+            _updateActiveIndex(3);
+            Navigator.pushReplacement(
               context,
               MaterialPageRoute(builder: (context) => const RecipesScreen()),
             );
@@ -43,17 +54,33 @@ class MenuComponent extends StatelessWidget {
     );
   }
 
-  Widget _buildMenuItem(IconData icon, String text, Function() onPressed) {
+  void _updateActiveIndex(int index) {
+    setState(() {
+      _activeIndex = index;
+    });
+  }
+
+  Widget _buildMenuItem(
+      IconData icon, String text, int index, Function() onPressed) {
     return InkWell(
-      onTap: onPressed,
+      onTap: () {
+        _updateActiveIndex(index); // Update active index before navigation
+        onPressed(); // Perform navigation
+      },
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(icon, color: Colors.white),
+          Icon(icon,
+              color: _activeIndex == index
+                  ? const Color(0xff80A1D4)
+                  : const Color(0xffBFBFBF)),
           const SizedBox(height: 4),
           Text(
             text,
-            style: const TextStyle(color: Colors.white),
+            style: TextStyle(
+                color: _activeIndex == index
+                    ? const Color(0xff80A1D4)
+                    : const Color(0xffBFBFBF)),
           ),
         ],
       ),

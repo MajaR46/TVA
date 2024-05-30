@@ -59,23 +59,33 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(height: 64.0),
                 TextField(
                   controller: _emailController,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     labelText: 'E-pošta',
                     labelStyle: TextStyle(color: Color(0xffdb7706)),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide:
+                          BorderSide(color: Color(0xffBFBFBF), width: 2.0),
+                    ),
                     focusedBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(color: Color(0xffdb7706)),
-                        borderRadius: BorderRadius.circular(25)),
+                      borderSide:
+                          BorderSide(color: Color(0xffBFBFBF), width: 2.0),
+                    ),
                   ),
                 ),
                 const SizedBox(height: 16.0),
                 TextField(
                   controller: _passwordController,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     labelText: 'Geslo',
                     labelStyle: TextStyle(color: Color(0xffdb7706)),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide:
+                          BorderSide(color: Color(0xffBFBFBF), width: 2.0),
+                    ),
                     focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Color(0xffdb7706)),
-                        borderRadius: BorderRadius.circular(25)),
+                      borderSide:
+                          BorderSide(color: Color(0xffBFBFBF), width: 2.0),
+                    ),
                   ),
                   obscureText: true,
                 ),
