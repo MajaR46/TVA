@@ -1,9 +1,17 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:foodie/models/recipe.dart';
 import 'package:foodie/models/nutrition.dart';
 import 'package:foodie/services/api_service.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
+
+enum Difficulty { easy, medium, hard }
+
+enum Taste { sweet, salty }
+
+enum Category { breakfast, lunch, dinner, dessert, snack }
 
 class AddRecipeScreen extends StatefulWidget {
   @override
@@ -18,9 +26,10 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
   int _timeOfMaking = 0;
   Category _category = Category.breakfast;
   Taste _taste = Taste.sweet;
+  File? _image;
+  final ImagePicker _picker = ImagePicker();
 
   late DatabaseReference dbRef;
-
   List<Map<String, String>> _ingredientsList = [];
   List<Map<String, String>> _stepsList = [];
 
@@ -30,18 +39,46 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
     dbRef = FirebaseDatabase.instance.ref().child('Recipes');
   }
 
+  Future<void> _pickImage() async {
+    final XFile? pickedImage =
+        await _picker.pickImage(source: ImageSource.gallery);
+    if (pickedImage != null) {
+      setState(() {
+        _image = File(pickedImage.path);
+      });
+    }
+  }
+
+  Future<String?> _uploadImage(File imageFile) async {
+    try {
+      final storageRef = FirebaseStorage.instance
+          .ref()
+          .child('recipe_images/${DateTime.now().millisecondsSinceEpoch}.jpg');
+      final uploadTask = storageRef.putFile(imageFile);
+      final snapshot = await uploadTask.whenComplete(() {});
+      final downloadUrl = await snapshot.ref.getDownloadURL();
+      return downloadUrl;
+    } catch (e) {
+      print('Error uploading image: $e');
+      return null;
+    }
+  }
+
   void _addToList() {
     setState(() {
-      _stepsList.add({
-        'steps': _stepsController.text,
-      });
-      _stepsController.clear();
-      _ingredientsList.add({
-        'name': _ingredientsNameController.text,
-        'amount': _ingredientsAmountController.text,
-      });
-      _ingredientsNameController.clear();
-      _ingredientsAmountController.clear();
+      if (_stepsController.text.isNotEmpty) {
+        _stepsList.add({'steps': _stepsController.text});
+        _stepsController.clear();
+      }
+      if (_ingredientsNameController.text.isNotEmpty &&
+          _ingredientsAmountController.text.isNotEmpty) {
+        _ingredientsList.add({
+          'name': _ingredientsNameController.text,
+          'amount': _ingredientsAmountController.text,
+        });
+        _ingredientsNameController.clear();
+        _ingredientsAmountController.clear();
+      }
     });
   }
 
@@ -51,12 +88,17 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
     });
 
     try {
+      String? imageUrl;
+      if (_image != null) {
+        imageUrl = await _uploadImage(_image!);
+      }
+
       Nutrition nutrition = await fetchNutrition(_nameController.text);
 
       Map<String, dynamic> recipeData = {
         'name': _nameController.text,
         'description': _descriptionController.text,
-        'steps': _stepsController.text,
+        'steps': _stepsList,
         'ingredients': _ingredientsList,
         'difficulty': _difficulty.toString().split('.').last,
         'timeOfMaking': _timeOfMaking,
@@ -67,6 +109,7 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
         'category': _category.toString().split('.').last,
         'taste': _taste.toString().split('.').last,
         'authorEmail': FirebaseAuth.instance.currentUser?.email ?? 'Unknown',
+        if (imageUrl != null) 'image_url': imageUrl,
       };
 
       await dbRef.push().set(recipeData);
@@ -85,7 +128,6 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
 
   bool _isLoading = false;
   String? _errorMessage;
-
   final TextEditingController _ingredientsNameController =
       TextEditingController();
   final TextEditingController _ingredientsAmountController =
@@ -94,9 +136,7 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Add Recipe'),
-      ),
+      appBar: AppBar(title: Text('Add Recipe')),
       body: Padding(
         padding: EdgeInsets.all(16.0),
         child: SingleChildScrollView(
@@ -104,41 +144,30 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               TextField(
-                controller: _nameController,
-                decoration: InputDecoration(labelText: 'Name'),
-              ),
+                  controller: _nameController,
+                  decoration: InputDecoration(labelText: 'Name')),
               SizedBox(height: 16.0),
               TextField(
-                controller: _descriptionController,
-                decoration: InputDecoration(labelText: 'Description'),
-              ),
+                  controller: _descriptionController,
+                  decoration: InputDecoration(labelText: 'Description')),
               SizedBox(height: 16.0),
               ListView.builder(
                 shrinkWrap: true,
                 itemCount: _stepsList.length,
                 itemBuilder: (context, index) {
-                  return Row(
-                    children: [
-                      Expanded(
-                        child: Text(_stepsList[index]['steps'] ?? ''),
-                      )
-                    ],
-                  );
+                  return Row(children: [
+                    Expanded(child: Text(_stepsList[index]['steps'] ?? ''))
+                  ]);
                 },
               ),
               Row(
                 children: [
                   Expanded(
-                    child: TextField(
-                      controller: _stepsController,
-                      decoration: InputDecoration(labelText: 'Step'),
-                    ),
-                  ),
+                      child: TextField(
+                          controller: _stepsController,
+                          decoration: InputDecoration(labelText: 'Step'))),
                   SizedBox(width: 16.0),
-                  ElevatedButton(
-                    onPressed: _addToList,
-                    child: Text('Add'),
-                  ),
+                  ElevatedButton(onPressed: _addToList, child: Text('Add')),
                 ],
               ),
               SizedBox(height: 16.0),
@@ -149,12 +178,10 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
                   return Row(
                     children: [
                       Expanded(
-                        child: Text(_ingredientsList[index]['name'] ?? ''),
-                      ),
+                          child: Text(_ingredientsList[index]['name'] ?? '')),
                       SizedBox(width: 16.0),
                       Expanded(
-                        child: Text(_ingredientsList[index]['amount'] ?? ''),
-                      ),
+                          child: Text(_ingredientsList[index]['amount'] ?? '')),
                     ],
                   );
                 },
@@ -163,24 +190,18 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
               Row(
                 children: [
                   Expanded(
-                    child: TextField(
-                      controller: _ingredientsNameController,
-                      decoration: InputDecoration(labelText: 'Ingredient Name'),
-                    ),
-                  ),
+                      child: TextField(
+                          controller: _ingredientsNameController,
+                          decoration:
+                              InputDecoration(labelText: 'Ingredient Name'))),
                   SizedBox(width: 16.0),
                   Expanded(
-                    child: TextField(
-                      controller: _ingredientsAmountController,
-                      decoration:
-                          InputDecoration(labelText: 'Ingredient Amount'),
-                    ),
-                  ),
+                      child: TextField(
+                          controller: _ingredientsAmountController,
+                          decoration:
+                              InputDecoration(labelText: 'Ingredient Amount'))),
                   SizedBox(width: 16.0),
-                  ElevatedButton(
-                    onPressed: _addToList,
-                    child: Text('Add'),
-                  ),
+                  ElevatedButton(onPressed: _addToList, child: Text('Add')),
                 ],
               ),
               SizedBox(height: 16.0),
@@ -193,9 +214,8 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
                 },
                 items: Difficulty.values
                     .map((difficulty) => DropdownMenuItem(
-                          value: difficulty,
-                          child: Text(difficulty.toString().split('.').last),
-                        ))
+                        value: difficulty,
+                        child: Text(difficulty.toString().split('.').last)))
                     .toList(),
                 decoration: InputDecoration(labelText: 'Difficulty'),
               ),
@@ -226,10 +246,8 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
                       },
                       items: Category.values
                           .map((category) => DropdownMenuItem(
-                                value: category,
-                                child:
-                                    Text(category.toString().split('.').last),
-                              ))
+                              value: category,
+                              child: Text(category.toString().split('.').last)))
                           .toList(),
                       decoration: InputDecoration(labelText: 'Category'),
                     ),
@@ -246,13 +264,20 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
                 },
                 items: Taste.values
                     .map((taste) => DropdownMenuItem(
-                          value: taste,
-                          child: Text(taste.toString().split('.').last),
-                        ))
+                        value: taste,
+                        child: Text(taste.toString().split('.').last)))
                     .toList(),
                 decoration: InputDecoration(labelText: 'Taste'),
               ),
               SizedBox(height: 32.0),
+              _image == null
+                  ? TextButton.icon(
+                      onPressed: _pickImage,
+                      icon: Icon(Icons.image),
+                      label: Text('Pick an Image'),
+                    )
+                  : Image.file(_image!),
+              SizedBox(height: 16.0),
               ElevatedButton(
                 onPressed: _isLoading ? null : saveRecipe,
                 child: _isLoading
@@ -261,10 +286,7 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
               ),
               if (_errorMessage != null) ...[
                 SizedBox(height: 16.0),
-                Text(
-                  _errorMessage!,
-                  style: TextStyle(color: Colors.red),
-                ),
+                Text(_errorMessage!, style: TextStyle(color: Colors.red)),
               ],
             ],
           ),

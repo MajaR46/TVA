@@ -1,6 +1,11 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:foodie/models/recipe.dart';
+
+enum Difficulty { easy, medium, hard }
+
+enum Taste { sweet, salty }
+
+enum Category { breakfast, lunch, dinner, dessert, snack }
 
 class UpdateRecipe extends StatefulWidget {
   const UpdateRecipe({Key? key, required this.recipeKey}) : super(key: key);

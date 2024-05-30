@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:foodie/models/recipe.dart';
 import 'firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:foodie/screens/splash_screen.dart';
-import 'package:hive_flutter/adapters.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 void main() async {
@@ -12,12 +10,7 @@ void main() async {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
-    await Hive.initFlutter();
 
-    // Register adapters for Recipe and Ingredient
-    Hive.registerAdapter(RecipeAdapter());
-    Hive.registerAdapter(IngredientAdapter());
-    await Hive.openBox<Recipe>('recipes');
     runApp(const MyApp());
     Fluttertoast.showToast(msg: "Database connected");
   } catch (error) {

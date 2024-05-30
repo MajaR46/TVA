@@ -1,9 +1,10 @@
 // recipes_screen.dart
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:foodie/screens/add_recipe_screen.dart';
-import 'package:foodie/screens/update_recipe_screen.dart';
+import 'package:foodie/screens/recipes/add_recipe_screen.dart';
+import 'package:foodie/screens/recipes/update_recipe_screen.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
+import '/components/menu.dart';
 
 class RecipesScreen extends StatefulWidget {
   const RecipesScreen({Key? key}) : super(key: key);
@@ -91,6 +92,7 @@ class _RecipesScreenState extends State<RecipesScreen> {
         },
         child: Icon(Icons.add),
       ),
+      bottomNavigationBar: MenuComponent(),
     );
   }
 }

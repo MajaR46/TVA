@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '/screens/home_screen.dart';
-import '/screens/recipes_screen.dart';
+import '../screens/recipes/recipes_screen.dart';
 
 class MenuComponent extends StatelessWidget {
   @override
@@ -20,19 +20,19 @@ class MenuComponent extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          _buildMenuItem(Icons.home, 'Domov', () {
+          _buildMenuItem(Icons.home, 'Home', () {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => HomeScreen()),
             );
           }),
-          _buildMenuItem(Icons.category, 'Kategorije', () {
+          _buildMenuItem(Icons.category, 'Categories', () {
             // Navigate to categories page
           }),
-          _buildMenuItem(Icons.search, 'Išči', () {
+          _buildMenuItem(Icons.search, 'Search', () {
             // Navigate to search page
           }),
-          _buildMenuItem(Icons.person, 'Profil', () {
+          _buildMenuItem(Icons.person, 'Profile', () {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => const RecipesScreen()),
