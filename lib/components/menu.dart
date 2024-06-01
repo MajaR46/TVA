@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '/screens/home_screen.dart';
+import 'package:foodie/screens/recipes/categories_screen.dart';
 import '../screens/recipes/recipes_screen.dart';
 
 class MenuComponent extends StatefulWidget {
@@ -36,6 +37,8 @@ class _MenuComponentState extends State<MenuComponent> {
           }),
           _buildMenuItem(Icons.category, 'Categories', 1, () {
             _updateActiveIndex(1);
+            Navigator.pushReplacement(context,
+                MaterialPageRoute(builder: (context) => CategoriesPage()));
             // TODO: Create and Navigate to categories page. Tm rabva komponento ta kvadratek z napisom na sredin
           }),
           _buildMenuItem(Icons.search, 'Search', 2, () {
