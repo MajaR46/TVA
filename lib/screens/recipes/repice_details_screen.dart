@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:foodie/app_styles.dart';
 
 class RecipeDetailsScreen extends StatelessWidget {
   final String recipeId;
@@ -107,8 +108,16 @@ class RecipeDetailsScreen extends StatelessWidget {
                     itemBuilder: (context, index) {
                       final ingredients = recipeData?['ingredients'] as List?;
                       return ListTile(
-                        title: Text(ingredients?[index]['name'] ?? ''),
-                        subtitle: Text(ingredients?[index]['amount'] ?? ''),
+                        title: Text(
+                          ingredients?[index]['name'] ?? '',
+                          style: AppStyles.paragraph1
+                              .copyWith(color: AppStyles.black),
+                        ),
+                        trailing: Text(
+                          ingredients?[index]['amount'] ?? '',
+                          style: AppStyles.paragraph1
+                              .copyWith(color: AppStyles.gray),
+                        ),
                       );
                     },
                   ),
