@@ -4,6 +4,8 @@ import 'package:foodie/screens/recipes/repice_details_screen.dart';
 import '/components/menu.dart';
 import 'package:firebase_database/firebase_database.dart';
 
+//TODO: ta recipe card je treba fliknt v komponento, da se loh pol uporabla še pr moji/shranjeni recepti in razišči (a razišči sploh rabva?)
+
 class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {

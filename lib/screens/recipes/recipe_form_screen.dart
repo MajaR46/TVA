@@ -52,6 +52,7 @@ class _RecipeFormState extends State<RecipeForm> {
   }
 
   Future<void> getRecipeData() async {
+    //TODO: ta funkcija naj gre v svoj file pod service
     DataSnapshot snapshot = await dbRef.child(widget.recipeKey!).get();
     Map recipe = snapshot.value as Map;
 

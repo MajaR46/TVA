@@ -36,11 +36,11 @@ class _MenuComponentState extends State<MenuComponent> {
           }),
           _buildMenuItem(Icons.category, 'Categories', 1, () {
             _updateActiveIndex(1);
-            // Navigate to categories page
+            // TODO: Create and Navigate to categories page. Tm rabva komponento ta kvadratek z napisom na sredin
           }),
           _buildMenuItem(Icons.search, 'Search', 2, () {
             _updateActiveIndex(2);
-            // Navigate to search page
+            // TODO: Create and Navigate to search page
           }),
           _buildMenuItem(Icons.person, 'Profile', 3, () {
             _updateActiveIndex(3);

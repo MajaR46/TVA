@@ -1,6 +1,10 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:foodie/app_styles.dart';
+import 'package:foodie/services/user_service.dart';
+
+//TODO: zrihtat stepse
 
 class RecipeDetailsScreen extends StatelessWidget {
   final String recipeId;
@@ -11,7 +15,18 @@ class RecipeDetailsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Recipe Details'),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text('Recipe Details'),
+            IconButton(
+              onPressed: () {
+                saveRecipe(context, recipeId);
+              },
+              icon: Icon(Icons.save_outlined),
+            ),
+          ],
+        ),
       ),
       body: FutureBuilder<DataSnapshot>(
         future: FirebaseDatabase.instance
@@ -19,8 +34,7 @@ class RecipeDetailsScreen extends StatelessWidget {
             .child('Recipes')
             .child(recipeId)
             .once()
-            .then((snapshot) =>
-                snapshot.snapshot), // Return the DataSnapshot directly
+            .then((snapshot) => snapshot.snapshot),
         builder: (context, AsyncSnapshot<DataSnapshot> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(
@@ -34,133 +48,260 @@ class RecipeDetailsScreen extends StatelessWidget {
             Map<dynamic, dynamic>? recipeData =
                 (snapshot.data?.value as Map<dynamic, dynamic>?);
 
-            return SingleChildScrollView(
+            return Padding(
               padding: EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  AspectRatio(
-                    aspectRatio: 16 / 9,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8.0),
-                        image: DecorationImage(
-                          image: NetworkImage(recipeData?['image_url'] ?? ''),
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 16.0),
-                  Text(
-                    recipeData?['name'] ?? 'No Name',
-                    style: TextStyle(
-                      fontSize: 24.0,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  SizedBox(height: 8.0),
-                  Row(
-                    children: [
-                      Icon(Icons.access_time),
-                      SizedBox(width: 4.0),
-                      Text(
-                        '${recipeData?['timeOfMaking']} min',
-                        style: TextStyle(fontSize: 16.0),
-                      ),
-                      SizedBox(width: 16.0),
-                      Icon(Icons.star),
-                      SizedBox(width: 4.0),
-                      Text(
-                        _getDifficultyText(recipeData?['difficulty']),
-                        style: TextStyle(fontSize: 16.0),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 16.0),
-                  Text(
-                    'Nutrition:',
-                    style: TextStyle(
-                      fontSize: 20.0,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  SizedBox(height: 8.0),
-                  Text('Kcal: ${recipeData?['kcal'] ?? 'N/A'}'),
-                  Text('Protein: ${recipeData?['protein'] ?? 'N/A'} g'),
-                  Text(
-                      'Carbohydrates: ${recipeData?['carbohydrates'] ?? 'N/A'} g'),
-                  Text('Fats: ${recipeData?['fats'] ?? 'N/A'} g'),
-                  SizedBox(height: 16.0),
-                  Text(
-                    'Ingredients:',
-                    style: TextStyle(
-                      fontSize: 20.0,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  SizedBox(height: 8.0),
-                  ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: (recipeData?['ingredients'] as List<dynamic>?)
-                            ?.length ??
-                        0,
-                    itemBuilder: (context, index) {
-                      final ingredients = recipeData?['ingredients'] as List?;
-                      return ListTile(
-                        title: Text(
-                          ingredients?[index]['name'] ?? '',
-                          style: AppStyles.paragraph1
-                              .copyWith(color: AppStyles.black),
-                        ),
-                        trailing: Text(
-                          ingredients?[index]['amount'] ?? '',
-                          style: AppStyles.paragraph1
-                              .copyWith(color: AppStyles.gray),
-                        ),
-                      );
-                    },
-                  ),
-                  SizedBox(height: 16.0),
-                  Text(
-                    'Steps:',
-                    style: TextStyle(
-                      fontSize: 20.0,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  SizedBox(height: 8.0),
-                  ListView.builder(
-                    shrinkWrap: true,
-                    itemCount:
-                        (recipeData?['steps'] as List<dynamic>?)?.length ?? 0,
-                    itemBuilder: (context, index) {
-                      final steps = recipeData?['steps'] as List?;
-                      return ListTile(
-                        title:
-                            Text('${index + 1}. ${steps?[index] ?? 'No step'}'),
-                      );
-                    },
-                  ),
-                ],
-              ),
+              child: RecipeDetailsContent(recipeData: recipeData),
             );
           }
         },
       ),
     );
   }
+}
 
-  String _getDifficultyText(String? difficulty) {
-    switch (difficulty) {
-      case 'easy':
-        return 'Easy';
-      case 'medium':
-        return 'Medium';
-      case 'hard':
-        return 'Hard';
-      default:
-        return 'Unknown';
-    }
+class RecipeDetailsContent extends StatelessWidget {
+  final Map<dynamic, dynamic>? recipeData;
+
+  const RecipeDetailsContent({Key? key, required this.recipeData})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          AspectRatio(
+            aspectRatio: 16 / 9,
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8.0),
+                image: DecorationImage(
+                  image: NetworkImage(recipeData?['image_url'] ?? ''),
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+          ),
+          SizedBox(height: 16.0),
+          RecipeInfo(recipeData: recipeData),
+          SizedBox(height: 16.0),
+          RecipeNutrition(recipeData: recipeData),
+          SizedBox(height: 16.0),
+          RecipeIngredients(recipeData: recipeData),
+          SizedBox(height: 16.0),
+          RecipeSteps(recipeData: recipeData),
+        ],
+      ),
+    );
+  }
+}
+
+class RecipeInfo extends StatelessWidget {
+  final Map<dynamic, dynamic>? recipeData;
+  const RecipeInfo({Key? key, required this.recipeData}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Center(
+          child: Text(
+            recipeData?['name'] ?? 'No Name',
+            style: TextStyle(
+              fontSize: 24.0,
+              fontWeight: FontWeight.bold,
+              color: Colors.black, // Title color
+            ),
+          ),
+        ),
+        SizedBox(height: 8.0),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.access_time, color: AppStyles.silver), // Icon color
+            SizedBox(width: 4.0),
+            Text(
+              '${recipeData?['timeOfMaking']} min',
+              style: TextStyle(
+                  fontSize: 16.0, color: AppStyles.silver), // Text color
+            ),
+            SizedBox(width: 16.0),
+            Icon(Icons.fastfood_outlined,
+                color: AppStyles.silver), // Fire icon color
+            SizedBox(width: 4.0),
+            Text(
+              'Kcal: ${recipeData?['kcal'] ?? 'N/A'}',
+              style: TextStyle(
+                  fontSize: 16.0, color: AppStyles.silver), // Text color
+            ),
+            SizedBox(width: 16.0),
+            Icon(Icons.star_border, color: AppStyles.silver), // Icon color
+            SizedBox(width: 4.0),
+            Text(
+              _getDifficultyText(recipeData?['difficulty']),
+              style: TextStyle(
+                  fontSize: 16.0, color: AppStyles.silver), // Text color
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class RecipeNutrition extends StatelessWidget {
+  final Map<dynamic, dynamic>? recipeData;
+
+  const RecipeNutrition({Key? key, required this.recipeData}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(height: 8.0),
+        Row(
+          children: [
+            Expanded(
+              child: _buildNutritionBox(Icons.energy_savings_leaf_outlined,
+                  '${recipeData?['protein'] ?? 'N/A'} g'),
+            ),
+            SizedBox(width: 8.0),
+            Expanded(
+              child: _buildNutritionBox(Icons.local_pizza_outlined,
+                  '${recipeData?['carbohydrates'] ?? 'N/A'} g'),
+            ),
+            SizedBox(width: 8.0),
+            Expanded(
+              child: _buildNutritionBox(
+                  Icons.kitchen_outlined, '${recipeData?['fats'] ?? 'N/A'} g'),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildNutritionBox(IconData icon, String value) {
+    return Container(
+      decoration: BoxDecoration(
+        color: AppStyles.antiFlashWhite,
+        borderRadius: BorderRadius.circular(8.0),
+      ),
+      padding: EdgeInsets.symmetric(
+          vertical: 22.0, horizontal: 16.0), // Adjusted padding
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(icon, color: AppStyles.ochre, size: 30.0),
+          SizedBox(width: 8.0), // Increased width
+          Text(value, style: TextStyle(fontSize: 16.0)),
+        ],
+      ),
+    );
+  }
+}
+
+class RecipeIngredients extends StatelessWidget {
+  final Map<dynamic, dynamic>? recipeData;
+
+  const RecipeIngredients({Key? key, required this.recipeData})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Ingredients:',
+          style: TextStyle(
+            fontSize: 20.0,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        SizedBox(height: 8.0),
+        ListView.builder(
+          shrinkWrap: true,
+          itemCount:
+              (recipeData?['ingredients'] as List<dynamic>?)?.length ?? 0,
+          itemBuilder: (context, index) {
+            final ingredients = recipeData?['ingredients'] as List?;
+            return ListTile(
+              title: Text(
+                ingredients?[index]['name'] ?? '',
+                style: AppStyles.paragraph1.copyWith(color: AppStyles.black),
+              ),
+              trailing: Text(
+                ingredients?[index]['amount'] ?? '',
+                style: AppStyles.paragraph1.copyWith(color: AppStyles.gray),
+              ),
+            );
+          },
+        ),
+      ],
+    );
+  }
+}
+
+class RecipeSteps extends StatelessWidget {
+  final Map<dynamic, dynamic>? recipeData;
+
+  const RecipeSteps({Key? key, required this.recipeData}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Steps:',
+          style: TextStyle(
+            fontSize: 20.0,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        SizedBox(height: 8.0),
+        ListView.builder(
+          shrinkWrap: true,
+          itemCount: (recipeData?['steps'] as List<dynamic>?)?.length ?? 0,
+          itemBuilder: (context, index) {
+            final steps = recipeData?['steps'] as List<dynamic>?;
+
+            final stepDescription = steps?[index].toString();
+
+            return Container(
+              margin: EdgeInsets.symmetric(vertical: 4.0),
+              padding: EdgeInsets.all(12.0),
+              decoration: BoxDecoration(
+                color: Colors.grey[200],
+                borderRadius: BorderRadius.circular(12.0),
+              ),
+              child: ListTile(
+                title: Text(
+                  '${index + 1}. $stepDescription',
+                  style: TextStyle(fontSize: 16.0),
+                ),
+              ),
+            );
+          },
+        ),
+      ],
+    );
+  }
+}
+
+String _getDifficultyText(String? difficulty) {
+  switch (difficulty) {
+    case 'easy':
+      return 'Easy';
+    case 'medium':
+      return 'Medium';
+    case 'hard':
+      return 'Hard';
+    default:
+      return 'Unknown';
   }
 }
