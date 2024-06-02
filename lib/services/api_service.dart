@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:foodie/models/nutrition.dart';
 
 Future<Nutrition> fetchNutrition(String meal) async {
-  const String apiKey = '8m9g5fXPqPRxoIYgB0crVA==ZzuoBycg1p1I7Xcu';
+  const String apiKey = '4rnxolmK38cgKdaEZoGDti15qBMTMZv1Sm0qo2qY';
 
   try {
     final response = await Dio().get(

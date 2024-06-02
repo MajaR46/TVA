@@ -2,6 +2,8 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:foodie/models/nutrition.dart';
+import 'package:foodie/services/api_service.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
@@ -122,6 +124,7 @@ class _RecipeFormState extends State<RecipeForm> {
     });
 
     try {
+      Nutrition nutrition = await fetchNutrition(_nameController.text);
       String? imageUrl;
       if (_image != null) {
         imageUrl = await _uploadImage(_image!);
@@ -134,10 +137,10 @@ class _RecipeFormState extends State<RecipeForm> {
         'ingredients': _ingredientsList,
         'difficulty': _difficulty.toString().split('.').last,
         'timeOfMaking': _timeOfMaking,
-        'kcal': _kcal,
-        'protein': _protein,
-        'carbohydrates': _carbohydrates,
-        'fats': _fats,
+        'kcal': nutrition.calories,
+        'protein': nutrition.proteinG,
+        'carbohydrates': nutrition.carbohydratesTotalG,
+        'fats': nutrition.fatTotalG,
         'category': _category.toString().split('.').last,
         'taste': _taste.toString().split('.').last,
         'authorEmail': FirebaseAuth.instance.currentUser?.email ?? 'Unknown',
