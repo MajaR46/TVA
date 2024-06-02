@@ -1,10 +1,10 @@
+// home_screen.dart
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
-import 'package:foodie/screens/recipes/repice_details_screen.dart';
-import '/components/menu.dart';
 import 'package:firebase_database/firebase_database.dart';
-
-//TODO: ta recipe card je treba fliknt v komponento, da se loh pol uporabla še pr moji/shranjeni recepti in razišči (a razišči sploh rabva?)
+import 'package:foodie/screens/recipes/repice_details_screen.dart';
+import 'package:foodie/components/menu.dart';
+import 'package:foodie/components/recipeCard.dart';
 
 class HomeScreen extends StatelessWidget {
   @override
@@ -60,7 +60,7 @@ class _SearchWidgetState extends State<SearchWidget> {
             icon: Icon(Icons.clear),
             onPressed: () {
               _searchController.clear();
-              // TODO: Clear search results (js mejbi nebi tega spoh delala)
+              // TODO: Clear search results
             },
           ),
           filled: true,
@@ -75,7 +75,7 @@ class _SearchWidgetState extends State<SearchWidget> {
           ),
         ),
         onChanged: (value) {
-          // TODO: Perform search (js mejbi nebi tega spoh delala)
+          // TODO: Perform search
         },
       ),
     );
@@ -149,97 +149,18 @@ class LatestRecipesWidget extends StatelessWidget {
                 Map recipe = snapshot.value as Map;
                 recipe['key'] = snapshot.key;
 
-                return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: InkWell(
-                    onTap: () {
-                      // Navigate to RecipeDetailsScreen with the recipe ID
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => RecipeDetailsScreen(
-                            recipeId: recipe['key'],
-                          ),
+                return RecipeCard(
+                  recipe: recipe,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => RecipeDetailsScreen(
+                          recipeId: recipe['key'],
                         ),
-                      );
-                    },
-                    child: SizedBox(
-                      width: double.infinity,
-                      height: 300.0,
-                      child: Stack(
-                        children: [
-                          Positioned.fill(
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(8.0),
-                              child: recipe['image_url'] != null
-                                  ? Image.network(
-                                      recipe['image_url'],
-                                      fit: BoxFit.cover,
-                                    )
-                                  : Container(
-                                      color: Colors.grey[200],
-                                    ),
-                            ),
-                          ),
-                          Positioned(
-                            left: 0,
-                            bottom: 0,
-                            right: 0,
-                            child: Container(
-                              padding: const EdgeInsets.all(8.0),
-                              color: Colors.black54,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    recipe['name'] ?? 'No Name',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 18.0,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  SizedBox(height: 4.0),
-                                  Row(
-                                    children: [
-                                      Icon(
-                                        Icons.access_time,
-                                        size: 16.0,
-                                        color: Colors.white,
-                                      ),
-                                      SizedBox(width: 4.0),
-                                      Text(
-                                        '${recipe['timeOfMaking'] ?? 0} min',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 14.0,
-                                        ),
-                                      ),
-                                      SizedBox(width: 16.0),
-                                      Icon(
-                                        Icons.star,
-                                        size: 16.0,
-                                        color: Colors.white,
-                                      ),
-                                      SizedBox(width: 4.0),
-                                      Text(
-                                        _getDifficultyText(
-                                            recipe['difficulty']),
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 14.0,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
                       ),
-                    ),
-                  ),
+                    );
+                  },
                 );
               },
             ),
@@ -247,18 +168,5 @@ class LatestRecipesWidget extends StatelessWidget {
         ],
       ),
     );
-  }
-
-  String _getDifficultyText(String? difficulty) {
-    switch (difficulty) {
-      case 'easy':
-        return 'Easy';
-      case 'medium':
-        return 'Medium';
-      case 'hard':
-        return 'Hard';
-      default:
-        return 'Unknown';
-    }
   }
 }

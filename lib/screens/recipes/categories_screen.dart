@@ -18,21 +18,21 @@ class CategoriesPage extends StatelessWidget {
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              SizedBox(height: 16.0),
+              const SizedBox(height: 16.0),
               Center(
                 child: Text(
                   'Categories',
                   style: AppStyles.heading1.copyWith(color: AppStyles.ochre),
                 ),
               ),
-              SizedBox(height: 38.0),
-              Text('Meal', style: AppStyles.heading3),
-              SizedBox(height: 10.0),
-              SingleChildScrollView(
+              const SizedBox(height: 38.0),
+              const Text('Meal', style: AppStyles.heading3),
+              const SizedBox(height: 10.0),
+              const SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Row(
                   children: <Widget>[
@@ -44,13 +44,13 @@ class CategoriesPage extends StatelessWidget {
                   ],
                 ),
               ),
-              SizedBox(height: 20.0),
-              Text(
+              const SizedBox(height: 20.0),
+              const Text(
                 'Taste',
                 style: AppStyles.heading3,
               ),
-              SizedBox(height: 10.0),
-              SingleChildScrollView(
+              const SizedBox(height: 10.0),
+              const SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Row(
                   children: <Widget>[
@@ -59,10 +59,10 @@ class CategoriesPage extends StatelessWidget {
                   ],
                 ),
               ),
-              SizedBox(height: 20.0),
-              Text('Difficulty', style: AppStyles.heading3),
-              SizedBox(height: 10.0),
-              SingleChildScrollView(
+              const SizedBox(height: 20.0),
+              const Text('Difficulty', style: AppStyles.heading3),
+              const SizedBox(height: 10.0),
+              const SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Row(
                   children: <Widget>[
