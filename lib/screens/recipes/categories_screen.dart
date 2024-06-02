@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:foodie/components/categorySquare.dart';
 import 'package:foodie/app_styles.dart';
 import 'package:foodie/screens/home_screen.dart';
+import 'package:foodie/components/menu.dart';
 
 class CategoriesPage extends StatelessWidget {
   @override
@@ -76,6 +77,7 @@ class CategoriesPage extends StatelessWidget {
           ),
         ),
       ),
+      bottomNavigationBar: MenuComponent(),
     );
   }
 }

@@ -4,6 +4,7 @@ import 'package:foodie/components/recipeCard.dart';
 import 'package:foodie/screens/recipes/repice_details_screen.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:foodie/app_styles.dart';
+import 'package:foodie/components/menu.dart';
 
 class SingleCategoryScreen extends StatefulWidget {
   final String categoryType;
@@ -141,6 +142,7 @@ class _SingleCategoryScreenState extends State<SingleCategoryScreen> {
                     ],
                   ),
                 ),
+      bottomNavigationBar: MenuComponent(),
     );
   }
 }

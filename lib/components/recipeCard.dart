@@ -54,7 +54,7 @@ class RecipeCard extends StatelessWidget {
                       Icon(
                         Icons.access_time,
                         size: 16.0,
-                        color: Colors.white,
+                        color: AppStyles.carrotOrange,
                       ),
                       SizedBox(width: 4.0),
                       Text(
@@ -66,7 +66,7 @@ class RecipeCard extends StatelessWidget {
                       Icon(
                         Icons.star,
                         size: 16.0,
-                        color: Colors.white,
+                        color: AppStyles.vistaBlue,
                       ),
                       SizedBox(width: 4.0),
                       Text(_getDifficultyText(recipe['difficulty']),
