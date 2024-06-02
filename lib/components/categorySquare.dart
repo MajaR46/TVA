@@ -31,7 +31,7 @@ class CategorySquare extends StatelessWidget {
         if (label == 'Hard') return 'assets/images/hard.jpg';
         break;
     }
-    return 'assets/images/Logo.png'; // Default image path if none match
+    return 'assets/images/Logo.png';
   }
 
   @override
@@ -43,6 +43,8 @@ class CategorySquare extends StatelessWidget {
           MaterialPageRoute(
               builder: (context) => SingleCategoryScreen(
                     category: label,
+                    categoryType: categoryType,
+                    categoryLabel: label,
                   )),
         );
       },
@@ -57,11 +59,11 @@ class CategorySquare extends StatelessWidget {
           fit: StackFit.expand,
           children: <Widget>[
             ClipRRect(
-              borderRadius: BorderRadius.circular(10.0),
+              borderRadius: BorderRadius.circular(15.0),
               child: ColorFiltered(
                 colorFilter: ColorFilter.mode(
-                  Colors.black.withOpacity(0.5),
-                  BlendMode.dstATop,
+                  Colors.black.withOpacity(0.3),
+                  BlendMode.darken,
                 ),
                 child: Image.asset(
                   _getImagePath(),
@@ -74,11 +76,7 @@ class CategorySquare extends StatelessWidget {
                 padding: EdgeInsets.all(4.0),
                 child: Text(
                   label,
-                  style: TextStyle(
-                    color: AppStyles.onyx,
-                    fontSize: 16.0,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: AppStyles.heading3.copyWith(color: AppStyles.white),
                   textAlign: TextAlign.center,
                 ),
               ),
