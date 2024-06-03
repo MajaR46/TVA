@@ -23,125 +23,86 @@ class SingleCategoryScreen extends StatefulWidget {
 }
 
 class _SingleCategoryScreenState extends State<SingleCategoryScreen> {
-  final DatabaseReference _databaseReference =
-      FirebaseDatabase.instance.reference().child('Recipes');
-
-  final Query dbRef =
-      FirebaseDatabase.instance.ref().child('Recipes').orderByKey();
-
-  List<Map<dynamic, dynamic>> _recipes = [];
-  bool _isLoading = true;
+  late Query _categoryQuery;
 
   @override
   void initState() {
     super.initState();
-    _getRecipesForCategory(
-        widget.categoryType, widget.categoryLabel, widget.category);
+    _initializeQuery();
   }
 
-  Future<void> _getRecipesForCategory(
-      String categoryType, String categoryLabel, String category) async {
-    try {
-      DatabaseEvent event = await _databaseReference.once();
-      DataSnapshot snapshot = event.snapshot;
-      Map<dynamic, dynamic>? values = snapshot.value as Map<dynamic, dynamic>?;
-
-      if (values != null) {
-        values.forEach((key, value) {
-          String categoryKey;
-
-          switch (categoryType) {
-            case 'Meal':
-              categoryKey = 'category';
-              break;
-            case 'Taste':
-              categoryKey = 'taste';
-              break;
-            case 'Difficulty':
-              categoryKey = 'difficulty';
-              break;
-            default:
-              categoryKey = 'category';
-              break;
-          }
-
-          String categoryValue =
-              value[categoryKey]?.toString().toLowerCase() ?? '';
-
-          if (categoryValue == categoryLabel.toLowerCase()) {
-            _recipes.add(value);
-          }
-        });
-      }
-
-      setState(() {
-        _isLoading = false;
-      });
-    } catch (error) {
-      print("Error fetching recipes: $error");
-      setState(() {
-        _isLoading = false;
-      });
+  void _initializeQuery() {
+    String categoryKey;
+    switch (widget.categoryType) {
+      case 'Meal':
+        categoryKey = 'category';
+        break;
+      case 'Taste':
+        categoryKey = 'taste';
+        break;
+      case 'Difficulty':
+        categoryKey = 'difficulty';
+        break;
+      default:
+        categoryKey = 'category';
+        break;
     }
+    _categoryQuery = FirebaseDatabase.instance
+        .ref()
+        .child('Recipes')
+        .orderByChild(categoryKey)
+        .equalTo(widget.categoryLabel.toLowerCase());
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(),
-      body: _isLoading
-          ? const Center(
-              child: CircularProgressIndicator(),
-            )
-          : _recipes.isEmpty
-              ? const Center(
-                  child: Text('No recipes found for this category.'),
-                )
-              : Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      const SizedBox(height: 16.0),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8.0),
-                        child: Text(
-                          widget.categoryLabel,
-                          textAlign: TextAlign.center,
-                          style: AppStyles.heading1
-                              .copyWith(color: AppStyles.ochre),
-                        ),
-                      ),
-                      const SizedBox(height: 38.0),
-                      Expanded(
-                        child: FirebaseAnimatedList(
-                          query: dbRef,
-                          itemBuilder: (BuildContext context,
-                              DataSnapshot snapshot,
-                              Animation<double> animation,
-                              int index) {
-                            Map recipe = snapshot.value as Map;
-                            recipe['key'] = snapshot.key;
-
-                            return RecipeCard(
-                              recipe: recipe,
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => RecipeDetailsScreen(
-                                      recipeId: recipe['key'],
-                                    ),
-                                  ),
-                                );
-                              },
-                            );
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const SizedBox(height: 16.0),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: Text(
+                widget.categoryLabel,
+                textAlign: TextAlign.center,
+                style: AppStyles.heading1.copyWith(color: AppStyles.ochre),
+              ),
+            ),
+            const SizedBox(height: 38.0),
+            Expanded(
+              child: FirebaseAnimatedList(
+                query: _categoryQuery,
+                defaultChild: const Center(
+                  child: CircularProgressIndicator(),
                 ),
+                itemBuilder: (BuildContext context, DataSnapshot snapshot,
+                    Animation<double> animation, int index) {
+                  Map recipe = snapshot.value as Map;
+                  recipe['key'] = snapshot.key;
+
+                  return RecipeCard(
+                    recipe: recipe,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => RecipeDetailsScreen(
+                            recipeId: recipe['key'],
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
       bottomNavigationBar: MenuComponent(),
     );
   }
