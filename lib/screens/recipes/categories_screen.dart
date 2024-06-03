@@ -23,7 +23,7 @@ class CategoriesPage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              const SizedBox(height: 16.0),
+              const SizedBox(height: 8.0),
               Center(
                 child: Text(
                   'Categories',

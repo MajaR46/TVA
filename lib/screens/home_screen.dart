@@ -1,10 +1,10 @@
-// home_screen.dart
-import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:foodie/screens/recipes/repice_details_screen.dart';
 import 'package:foodie/components/menu.dart';
 import 'package:foodie/components/recipeCard.dart';
+import 'package:foodie/components/searchWidget.dart';
 
 class HomeScreen extends StatelessWidget {
   @override
@@ -15,69 +15,28 @@ class HomeScreen extends StatelessWidget {
         title: const Text('Živijo'),
       ),
       body: Center(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            SearchWidget(),
-            const SizedBox(height: 20),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.0),
-              child: Text(
-                'Kategorije',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const SizedBox(height: 20),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16.0),
+                child: Text(
+                  'Kategorije',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
               ),
-            ),
-            const SizedBox(height: 10),
-            CategoriesWidget(),
-            const SizedBox(height: 20),
-            Expanded(child: LatestRecipesWidget()),
-          ],
+              const SizedBox(height: 10),
+              CategoriesWidget(),
+              const SizedBox(height: 20),
+              Expanded(child: LatestRecipesWidget()),
+            ],
+          ),
         ),
       ),
       bottomNavigationBar: MenuComponent(),
-    );
-  }
-}
-
-class SearchWidget extends StatefulWidget {
-  @override
-  _SearchWidgetState createState() => _SearchWidgetState();
-}
-
-class _SearchWidgetState extends State<SearchWidget> {
-  final TextEditingController _searchController = TextEditingController();
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      child: TextField(
-        controller: _searchController,
-        decoration: InputDecoration(
-          hintText: 'Search recipes...',
-          prefixIcon: Icon(Icons.search),
-          suffixIcon: IconButton(
-            icon: Icon(Icons.clear),
-            onPressed: () {
-              _searchController.clear();
-              // TODO: Clear search results
-            },
-          ),
-          filled: true,
-          fillColor: Colors.white.withOpacity(0.1),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12.0),
-            borderSide: BorderSide.none,
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10.0),
-            borderSide: BorderSide.none,
-          ),
-        ),
-        onChanged: (value) {
-          // TODO: Perform search
-        },
-      ),
     );
   }
 }
@@ -127,7 +86,7 @@ class LatestRecipesWidget extends StatelessWidget {
       .ref()
       .child('Recipes')
       .orderByKey()
-      .limitToLast(10); // Fetch latest 10 recipes
+      .limitToLast(10);
 
   @override
   Widget build(BuildContext context) {

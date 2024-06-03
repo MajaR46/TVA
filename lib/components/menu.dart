@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:foodie/screens/search_screen.dart';
 import '/screens/home_screen.dart';
 import 'package:foodie/screens/recipes/categories_screen.dart';
 import '../screens/recipes/recipes_screen.dart';
@@ -39,11 +40,11 @@ class _MenuComponentState extends State<MenuComponent> {
             _updateActiveIndex(1);
             Navigator.pushReplacement(context,
                 MaterialPageRoute(builder: (context) => CategoriesPage()));
-            // TODO: Create and Navigate to categories page. Tm rabva komponento ta kvadratek z napisom na sredin
           }),
           _buildMenuItem(Icons.search, 'Search', 2, () {
             _updateActiveIndex(2);
-            // TODO: Create and Navigate to search page
+            Navigator.pushReplacement(context,
+                MaterialPageRoute(builder: (context) => SearchScreen()));
           }),
           _buildMenuItem(Icons.person, 'Profile', 3, () {
             _updateActiveIndex(3);
