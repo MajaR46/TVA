@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:foodie/screens/recipes/my_recipes_screen.dart';
+import 'package:foodie/screens/recipes/saved_recipes_screen.dart';
 import 'package:foodie/services/user_service.dart';
 import '/components/menu.dart';
 import 'recipe_form_screen.dart';
@@ -158,17 +160,19 @@ class _RecipesScreenState extends State<RecipesScreen> {
             children: [
               ElevatedButton(
                 onPressed: () {
-                  setState(() {
-                    selectedSection = 'myRecipes';
-                  });
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => MyRecipesScreen()),
+                  );
                 },
                 child: Text('My Recipes'),
               ),
               ElevatedButton(
                 onPressed: () {
-                  setState(() {
-                    selectedSection = 'savedRecipes';
-                  });
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => SavedRecipesScreen()),
+                  );
                 },
                 child: Text('My Saved Recipes'),
               ),

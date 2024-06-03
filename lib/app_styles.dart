@@ -4,7 +4,7 @@ class AppStyles {
   // Colors
   static const Color ochre = Color(0xFFCC7722);
   static const Color carrotOrange = Color(0xFFFF8000);
-  static const Color earthYellow = Color(0xFFC9AE5D);
+  static const Color earthYellow = Color(0xFFFBB360);
   static const Color antiqueWhite = Color(0xFFFFF2DB);
   static const Color vistaBlue = Color(0xFF80A1D4);
   static const Color powderBlue = Color(0xFFB3C7E5);
