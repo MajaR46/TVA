@@ -29,7 +29,7 @@ class RecipeCard extends StatelessWidget {
         onTap: onTap,
         child: SizedBox(
           width: double.infinity,
-          height: 250.0,
+          height: 220.0,
           child: ClipRRect(
             borderRadius: BorderRadius.circular(20.0),
             child: Stack(

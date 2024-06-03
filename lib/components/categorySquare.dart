@@ -41,11 +41,12 @@ class CategorySquare extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => SingleCategoryScreen(
-                    category: label,
-                    categoryType: categoryType,
-                    categoryLabel: label,
-                  )),
+            builder: (context) => SingleCategoryScreen(
+              category: label,
+              categoryType: categoryType,
+              categoryLabel: label,
+            ),
+          ),
         );
       },
       child: Container(
@@ -73,7 +74,7 @@ class CategorySquare extends StatelessWidget {
             ),
             Center(
               child: Container(
-                padding: EdgeInsets.all(4.0),
+                padding: const EdgeInsets.all(4.0),
                 child: Text(
                   label,
                   style: AppStyles.heading3.copyWith(color: AppStyles.white),
