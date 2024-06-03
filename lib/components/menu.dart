@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:foodie/screens/search_screen.dart';
+import 'package:foodie/screens/user_profile_screen.dart';
 import '/screens/home_screen.dart';
 import 'package:foodie/screens/recipes/categories_screen.dart';
 import '../screens/recipes/recipes_screen.dart';
@@ -50,7 +51,8 @@ class _MenuComponentState extends State<MenuComponent> {
             _updateActiveIndex(3);
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => const RecipesScreen()),
+              MaterialPageRoute(
+                  builder: (context) => const UserProfileScreen()),
             );
           }),
         ],
