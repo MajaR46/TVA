@@ -10,8 +10,9 @@ class MenuComponent extends StatefulWidget {
   _MenuComponentState createState() => _MenuComponentState();
 }
 
+int _activeIndex = 0;
+
 class _MenuComponentState extends State<MenuComponent> {
-  int _activeIndex = 0;
 
   @override
   Widget build(BuildContext context) {

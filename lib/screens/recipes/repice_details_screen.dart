@@ -4,12 +4,31 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:foodie/app_styles.dart';
 import 'package:foodie/services/user_service.dart';
 
-//TODO: zrihtat stepse
-
-class RecipeDetailsScreen extends StatelessWidget {
+class RecipeDetailsScreen extends StatefulWidget {
   final String recipeId;
 
   const RecipeDetailsScreen({required this.recipeId});
+
+  @override
+  _RecipeDetailsScreenState createState() => _RecipeDetailsScreenState();
+}
+
+class _RecipeDetailsScreenState extends State<RecipeDetailsScreen> {
+  int servings = 1;
+
+  void increaseServings() {
+    setState(() {
+      servings++;
+    });
+  }
+
+  void decreaseServings() {
+    setState(() {
+      if (servings > 1) {
+        servings--;
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +40,7 @@ class RecipeDetailsScreen extends StatelessWidget {
             Text('Recipe Details'),
             IconButton(
               onPressed: () {
-                saveRecipe(context, recipeId);
+                saveRecipe(context, widget.recipeId);
               },
               icon: Icon(Icons.save_outlined),
             ),
@@ -32,7 +51,7 @@ class RecipeDetailsScreen extends StatelessWidget {
         future: FirebaseDatabase.instance
             .ref()
             .child('Recipes')
-            .child(recipeId)
+            .child(widget.recipeId)
             .once()
             .then((snapshot) => snapshot.snapshot),
         builder: (context, AsyncSnapshot<DataSnapshot> snapshot) {
@@ -50,7 +69,12 @@ class RecipeDetailsScreen extends StatelessWidget {
 
             return Padding(
               padding: EdgeInsets.all(16.0),
-              child: RecipeDetailsContent(recipeData: recipeData),
+              child: RecipeDetailsContent(
+                recipeData: recipeData,
+                servings: servings,
+                onIncreaseServings: increaseServings,
+                onDecreaseServings: decreaseServings,
+              ),
             );
           }
         },
@@ -61,9 +85,17 @@ class RecipeDetailsScreen extends StatelessWidget {
 
 class RecipeDetailsContent extends StatelessWidget {
   final Map<dynamic, dynamic>? recipeData;
+  final int servings;
+  final VoidCallback onIncreaseServings;
+  final VoidCallback onDecreaseServings;
 
-  const RecipeDetailsContent({Key? key, required this.recipeData})
-      : super(key: key);
+  const RecipeDetailsContent({
+    Key? key,
+    required this.recipeData,
+    required this.servings,
+    required this.onIncreaseServings,
+    required this.onDecreaseServings,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -88,7 +120,12 @@ class RecipeDetailsContent extends StatelessWidget {
           SizedBox(height: 16.0),
           RecipeNutrition(recipeData: recipeData),
           SizedBox(height: 16.0),
-          RecipeIngredients(recipeData: recipeData),
+          RecipeIngredients(
+            recipeData: recipeData,
+            servings: servings,
+            onIncreaseServings: onIncreaseServings,
+            onDecreaseServings: onDecreaseServings,
+          ),
           SizedBox(height: 16.0),
           RecipeSteps(recipeData: recipeData),
         ],
@@ -206,21 +243,50 @@ class RecipeNutrition extends StatelessWidget {
 
 class RecipeIngredients extends StatelessWidget {
   final Map<dynamic, dynamic>? recipeData;
+  final int servings;
+  final VoidCallback onIncreaseServings;
+  final VoidCallback onDecreaseServings;
 
-  const RecipeIngredients({Key? key, required this.recipeData})
-      : super(key: key);
+  const RecipeIngredients({
+    Key? key,
+    required this.recipeData,
+    required this.servings,
+    required this.onIncreaseServings,
+    required this.onDecreaseServings,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Ingredients:',
-          style: TextStyle(
-            fontSize: 20.0,
-            fontWeight: FontWeight.bold,
-          ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Ingredients:',
+              style: TextStyle(
+                fontSize: 20.0,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Row(
+              children: [
+                IconButton(
+                  onPressed: onDecreaseServings,
+                  icon: Icon(Icons.remove),
+                ),
+                Text(
+                  '$servings',
+                  style: TextStyle(fontSize: 18.0),
+                ),
+                IconButton(
+                  onPressed: onIncreaseServings,
+                  icon: Icon(Icons.add),
+                ),
+              ],
+            ),
+          ],
         ),
         SizedBox(height: 8.0),
         ListView.builder(
@@ -229,13 +295,17 @@ class RecipeIngredients extends StatelessWidget {
               (recipeData?['ingredients'] as List<dynamic>?)?.length ?? 0,
           itemBuilder: (context, index) {
             final ingredients = recipeData?['ingredients'] as List?;
+            String name = ingredients?[index]['name'] ?? '';
+            String amount = ingredients?[index]['amount'] ?? '';
+            String updatedAmount = _scaleAmount(amount, servings);
+
             return ListTile(
               title: Text(
-                ingredients?[index]['name'] ?? '',
+                name,
                 style: AppStyles.paragraph1.copyWith(color: AppStyles.black),
               ),
               trailing: Text(
-                ingredients?[index]['amount'] ?? '',
+                updatedAmount,
                 style: AppStyles.paragraph1.copyWith(color: AppStyles.gray),
               ),
             );
@@ -243,6 +313,25 @@ class RecipeIngredients extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  String _scaleAmount(String amount, int servings) {
+    RegExp regExp = RegExp(r'\d+');
+    Iterable<Match> matches = regExp.allMatches(amount);
+
+    if (matches.isEmpty) {
+      return amount;
+    }
+
+    String scaledAmount = amount;
+    for (Match match in matches) {
+      String matchText = match.group(0) ?? '';
+      int originalAmount = int.parse(matchText);
+      int newAmount = originalAmount * servings;
+      scaledAmount = scaledAmount.replaceFirst(matchText, newAmount.toString());
+    }
+
+    return scaledAmount;
   }
 }
 
@@ -268,9 +357,9 @@ class RecipeSteps extends StatelessWidget {
           shrinkWrap: true,
           itemCount: (recipeData?['steps'] as List<dynamic>?)?.length ?? 0,
           itemBuilder: (context, index) {
-            final steps = recipeData?['steps'] as List<dynamic>?;
+            final steps = recipeData?['steps'] as List?;
 
-            final stepDescription = steps?[index].toString();
+            final stepDescription = steps?[index]['steps'].toString();
 
             return Container(
               margin: EdgeInsets.symmetric(vertical: 4.0),
