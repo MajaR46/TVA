@@ -26,114 +26,117 @@ class UserProfileScreen extends StatelessWidget {
           },
         ),
       ),
-      body: Stack(
-        children: [
-          const Positioned(
-            top: 16,
-            left: 0,
-            right: 0,
-            child: Center(
-              child: Icon(
-                Icons.account_circle_rounded,
-                size: 200,
-                color: AppStyles.antiFlashWhite,
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Stack(
+          children: [
+            Positioned(
+              top: 16,
+              left: 0,
+              right: 0,
+              child: Center(
+                child: Text(
+                  'My Profile',
+                  style: AppStyles.heading1.copyWith(color: AppStyles.ochre),
+                ),
               ),
             ),
-          ),
-          Positioned(
-            top: 260,
-            left: 16,
-            right: 16,
-            child: GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => MyRecipesScreen()),
-                );
-              },
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  Container(
-                    width: double.infinity,
-                    height: 60,
-                    decoration: ShapeDecoration(
-                      color: AppStyles.antiqueWhite,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15),
+            Positioned(
+              top: 150,
+              left: 16,
+              right: 16,
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => MyRecipesScreen()),
+                  );
+                },
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Container(
+                      width: double.infinity,
+                      height: 60,
+                      decoration: ShapeDecoration(
+                        color: AppStyles.antiFlashWhite,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
+                        ),
                       ),
                     ),
-                  ),
-                  Positioned(
-                    left: 24,
-                    child: const Text('My Recipes',
-                        textAlign: TextAlign.center, style: AppStyles.heading4),
-                  ),
-                  Positioned(
-                    right: 16,
-                    child: Container(
-                      width: 24,
-                      height: 24,
-                      child: const Icon(
-                        Icons.arrow_forward,
-                        size: 24,
-                        color: Color(0xFF404040),
+                    Positioned(
+                      left: 24,
+                      child: const Text('My Recipes',
+                          textAlign: TextAlign.center,
+                          style: AppStyles.heading4),
+                    ),
+                    Positioned(
+                      right: 16,
+                      child: Container(
+                        width: 24,
+                        height: 24,
+                        child: const Icon(
+                          Icons.arrow_forward,
+                          size: 24,
+                          color: Color(0xFF404040),
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
-          Positioned(
-            top: 340,
-            left: 16,
-            right: 16,
-            child: GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => SavedRecipesScreen()),
-                );
-              },
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  Container(
-                    width: double.infinity,
-                    height: 60,
-                    decoration: ShapeDecoration(
-                      color: AppStyles.antiFlashWhite,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15),
+            Positioned(
+              top: 240,
+              left: 16,
+              right: 16,
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => SavedRecipesScreen()),
+                  );
+                },
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Container(
+                      width: double.infinity,
+                      height: 60,
+                      decoration: ShapeDecoration(
+                        color: AppStyles.antiFlashWhite,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
+                        ),
                       ),
                     ),
-                  ),
-                  Positioned(
-                    left: 24,
-                    child: const Text(
-                      'Saved Recipes',
-                      textAlign: TextAlign.center,
-                      style: AppStyles.heading4,
-                    ),
-                  ),
-                  Positioned(
-                    right: 16,
-                    child: Container(
-                      width: 24,
-                      height: 24,
-                      child: const Icon(
-                        Icons.arrow_forward,
-                        size: 24,
-                        color: Color(0xFF404040),
+                    Positioned(
+                      left: 24,
+                      child: const Text(
+                        'Saved Recipes',
+                        textAlign: TextAlign.center,
+                        style: AppStyles.heading4,
                       ),
                     ),
-                  ),
-                ],
+                    Positioned(
+                      right: 16,
+                      child: Container(
+                        width: 24,
+                        height: 24,
+                        child: const Icon(
+                          Icons.arrow_forward,
+                          size: 24,
+                          color: Color(0xFF404040),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
       bottomNavigationBar: MenuComponent(),
     );
