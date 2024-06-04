@@ -43,36 +43,63 @@ class _RecipeFormState extends State<RecipeForm> {
   final ImagePicker _picker = ImagePicker();
 
   late DatabaseReference dbRef;
+  List<Map<String, String>> _stepsList = []; // Declare _stepsList here
   List<Map<String, String>> _ingredientsList = [];
-  List<Map<String, String>> _stepsList = [];
+
+  void initializeLists(Map recipe) {
+    List<dynamic>? steps = recipe['steps'] as List<dynamic>?;
+    List<dynamic>? ingredients = recipe['ingredients'] as List<dynamic>?;
+
+    if (steps != null) {
+      // Directly store steps as strings
+      _stepsList = steps.map((step) => {'steps': step.toString()}).toList();
+    } else {
+      _stepsList = [];
+    }
+
+    if (ingredients != null) {
+      _ingredientsList = ingredients.map((ingredient) {
+        final ingredientMap = ingredient as Map<dynamic, dynamic>;
+        return {
+          'name': ingredientMap['name'].toString(),
+          'amount': ingredientMap['amount'].toString(),
+        };
+      }).toList();
+    } else {
+      _ingredientsList = [];
+    }
+  }
 
   @override
   void initState() {
     super.initState();
     dbRef = FirebaseDatabase.instance.ref().child('Recipes');
     getRecipeData();
+    _stepsList = [];
+    _ingredientsList = [];
   }
 
   Future<void> getRecipeData() async {
-    //TODO: ta funkcija naj gre v svoj file pod service
     DataSnapshot snapshot = await dbRef.child(widget.recipeKey!).get();
     Map recipe = snapshot.value as Map;
 
-    _nameController.text = recipe['name'];
-    _descriptionController.text = recipe['description'];
-    _stepsList = List<Map<String, String>>.from(recipe['steps']);
-    _ingredientsList = List<Map<String, String>>.from(recipe['ingredients']);
-    _difficulty = Difficulty.values.firstWhere(
-        (e) => e.toString().split('.').last == recipe['difficulty']);
-    _timeOfMaking = recipe['timeOfMaking'];
-    _kcal = recipe['kcal'];
-    _protein = recipe['protein'];
-    _carbohydrates = recipe['carbohydrates'];
-    _fats = recipe['fats'];
-    _category = Category.values
-        .firstWhere((e) => e.toString().split('.').last == recipe['category']);
-    _taste = Taste.values
-        .firstWhere((e) => e.toString().split('.').last == recipe['taste']);
+    setState(() {
+      _nameController.text = recipe['name'];
+      _descriptionController.text = recipe['description'];
+      initializeLists(recipe);
+      _difficulty = Difficulty.values.firstWhere(
+          (e) => e.toString().split('.').last == recipe['difficulty']);
+      _timeOfMaking = recipe['timeOfMaking'];
+      _kcal = (recipe['kcal'] ?? 0).toInt();
+      _protein = (recipe['protein'] ?? 0).toInt();
+      _carbohydrates = (recipe['carbohydrates'] ?? 0).toInt();
+      _fats = (recipe['fats'] ?? 0).toInt();
+
+      _category = Category.values.firstWhere(
+          (e) => e.toString().split('.').last == recipe['category']);
+      _taste = Taste.values
+          .firstWhere((e) => e.toString().split('.').last == recipe['taste']);
+    });
   }
 
   Future<void> _pickImage() async {
@@ -130,11 +157,19 @@ class _RecipeFormState extends State<RecipeForm> {
         imageUrl = await _uploadImage(_image!);
       }
 
+      List<String> stepsOnly =
+          _stepsList.map((step) => step['steps']!).toList();
+
+      List<Map<String, String>> ingredientsOnly = _ingredientsList
+          .map((ingredient) =>
+              {'name': ingredient['name']!, 'amount': ingredient['amount']!})
+          .toList();
+
       Map<String, dynamic> recipeData = {
         'name': _nameController.text,
         'description': _descriptionController.text,
-        'steps': _stepsList,
-        'ingredients': _ingredientsList,
+        'steps': stepsOnly,
+        'ingredients': ingredientsOnly,
         'difficulty': _difficulty.toString().split('.').last,
         'timeOfMaking': _timeOfMaking,
         'kcal': nutrition.calories,
@@ -279,6 +314,7 @@ class _RecipeFormState extends State<RecipeForm> {
                     ),
                   ),
                   FloatingActionButton(
+                      heroTag: 'addButton',
                       onPressed: _addToList,
                       backgroundColor: const Color(0xffdb7706),
                       child: const Icon(Icons.add),
@@ -288,15 +324,21 @@ class _RecipeFormState extends State<RecipeForm> {
               const SizedBox(height: 32.0),
               ListView.builder(
                 shrinkWrap: true,
-                itemCount: _stepsList.length,
+                itemCount: _stepsList.length ?? 0,
                 itemBuilder: (context, index) {
+                  final step = _stepsList[index];
+                  final steps = step['steps'] ?? '';
                   return Container(
                     padding: const EdgeInsets.all(8.0),
                     margin: const EdgeInsets.symmetric(vertical: 4.0),
                     color: const Color(0xffF2F3F4),
                     child: Row(
                       children: [
-                        Expanded(child: Text(_stepsList[index]['steps'] ?? '')),
+                        Expanded(
+                          child: Text(
+                            steps,
+                          ),
+                        ),
                         IconButton(
                           icon: const Icon(Icons.delete),
                           onPressed: () {
@@ -366,28 +408,32 @@ class _RecipeFormState extends State<RecipeForm> {
               const SizedBox(height: 16.0),
               ListView.builder(
                 shrinkWrap: true,
-                itemCount: _ingredientsList.length,
+                itemCount: (_ingredientsList.length ?? 0),
                 itemBuilder: (context, index) {
+                  final ingredient = _ingredientsList[index];
+                  final amount = ingredient['amount'] ?? '';
+                  final name = ingredient['name'] ?? '';
+
                   return Container(
-                    padding: const EdgeInsets.all(8.0),
-                    margin: const EdgeInsets.symmetric(vertical: 4.0),
-                    color: const Color(0xffF2F3F4),
-                    child: Row(
-                      children: [
-                        Expanded(
-                            child: Text(_ingredientsList[index]['name'] ?? '')),
-                        Expanded(
-                            child:
-                                Text(_ingredientsList[index]['amount'] ?? '')),
-                        IconButton(
-                          icon: const Icon(Icons.delete),
-                          onPressed: () {
-                            setState(() {
-                              _ingredientsList.removeAt(index);
-                            });
-                          },
-                        ),
-                      ],
+                    margin: EdgeInsets.symmetric(vertical: 4.0),
+                    padding: EdgeInsets.all(12.0),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[200],
+                      borderRadius: BorderRadius.circular(12.0),
+                    ),
+                    child: ListTile(
+                      title: Text(
+                        '${amount} ${name}',
+                        style: TextStyle(fontSize: 16.0),
+                      ),
+                      trailing: IconButton(
+                        icon: Icon(Icons.delete),
+                        onPressed: () {
+                          setState(() {
+                            _ingredientsList.removeAt(index);
+                          });
+                        },
+                      ),
                     ),
                   );
                 },

@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:foodie/screens/recipes/categories_screen.dart';
+import 'package:foodie/screens/recipes/my_recipes_screen.dart';
 import 'package:foodie/screens/recipes/recipe_form_screen.dart';
 import 'package:foodie/screens/recipes/repice_details_screen.dart';
 import 'package:foodie/components/menu.dart';
 import 'package:foodie/components/recipeCard.dart';
 import 'package:foodie/components/searchWidget.dart';
+import 'package:foodie/screens/recipes/saved_recipes_screen.dart';
 import 'package:foodie/screens/recipes/single_categorie_screen.dart';
 import 'package:foodie/app_styles.dart';
 
@@ -24,11 +26,17 @@ class HomeScreen extends StatelessWidget {
               padding: EdgeInsets.only(top: 16.0),
               child: AppBar(
                 backgroundColor: AppStyles.white,
-                leading: const Icon(Icons.account_circle_outlined,
-                    color: AppStyles.carrotOrange, size: 36),
+                leading: FittedBox(
+                  fit: BoxFit.contain,
+                  child: Image.asset(
+                    'assets/images/Logo.png',
+                    width: 40.0, // Set the desired width
+                    height: 40.0, // Set the desired height
+                  ),
+                ),
                 title: Padding(
                   padding: const EdgeInsets.only(top: 8.0),
-                  child: Text('Živijo',
+                  child: Text('Foodie',
                       style:
                           AppStyles.heading3.copyWith(color: AppStyles.gray)),
                 ),
@@ -72,13 +80,20 @@ class HomeScreen extends StatelessWidget {
                             leading: Icon(Icons.food_bank),
                             title: Text('My Recipes'),
                             onTap: () {
-                              //////LINK TO MY RECIPES
+                              Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => MyRecipesScreen()));
                             }),
                         ListTile(
                             leading: Icon(Icons.save),
                             title: Text('Saved Recipes'),
                             onTap: () {
-                              //////LINK TO Saved RECIPES
+                              Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          SavedRecipesScreen()));
                             }),
                         ListTile(
                             leading: Icon(Icons.add),

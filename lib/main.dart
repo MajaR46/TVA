@@ -12,7 +12,6 @@ void main() async {
     );
 
     runApp(const MyApp());
-    Fluttertoast.showToast(msg: "Database connected");
   } catch (error) {
     print("error connection to the database: $error");
   }
