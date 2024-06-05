@@ -27,7 +27,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Future<void> registerWithEmailAndPassword() async {
     if (_passwordController.text != _confirmPasswordController.text) {
       setState(() {
-        errorMessage = "Gesli se ne ujemata";
+        errorMessage = "Passwords do not match";
       });
       return;
     }
@@ -65,7 +65,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 const Text(
-                  'Registracija',
+                  'Registration',
                   style: TextStyle(
                     fontSize: 32,
                     fontWeight: FontWeight.w800,
@@ -77,7 +77,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 TextField(
                   controller: _emailController,
                   decoration: const InputDecoration(
-                    labelText: 'E-pošta',
+                    labelText: 'E-mail',
                     labelStyle: TextStyle(color: Color(0xffdb7706)),
                     enabledBorder: OutlineInputBorder(
                       borderSide:
@@ -93,7 +93,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 TextField(
                   controller: _passwordController,
                   decoration: const InputDecoration(
-                    labelText: 'Geslo',
+                    labelText: 'Password',
                     labelStyle: TextStyle(color: Color(0xffdb7706)),
                     enabledBorder: OutlineInputBorder(
                       borderSide:
@@ -110,7 +110,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 TextField(
                   controller: _confirmPasswordController,
                   decoration: const InputDecoration(
-                    labelText: 'Potrdite geslo',
+                    labelText: 'Repeat password',
                     labelStyle: TextStyle(color: Color(0xffdb7706)),
                     enabledBorder: OutlineInputBorder(
                       borderSide:
@@ -138,7 +138,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 AlwaysStoppedAnimation<Color>(Colors.white),
                           )
                         : const Text(
-                            'Registracija',
+                            'Register',
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.w800,
@@ -158,7 +158,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                 TextButton(
                   onPressed: navigateToLogin,
-                  child: const Text('Že imate račun? Prijava',
+                  child: const Text('Already have an account? Login',
                       style: TextStyle(color: Colors.black)),
                 ),
               ],

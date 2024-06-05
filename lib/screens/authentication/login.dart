@@ -48,7 +48,7 @@ class _LoginScreenState extends State<LoginScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 const Text(
-                  'Prijava',
+                  'Login',
                   style: TextStyle(
                     fontSize: 32,
                     fontWeight: FontWeight.w800,
@@ -60,7 +60,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 TextField(
                   controller: _emailController,
                   decoration: const InputDecoration(
-                    labelText: 'E-pošta',
+                    labelText: 'E-mail',
                     labelStyle: TextStyle(color: Color(0xffdb7706)),
                     enabledBorder: OutlineInputBorder(
                       borderSide:
@@ -76,7 +76,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 TextField(
                   controller: _passwordController,
                   decoration: const InputDecoration(
-                    labelText: 'Geslo',
+                    labelText: 'Password',
                     labelStyle: TextStyle(color: Color(0xffdb7706)),
                     enabledBorder: OutlineInputBorder(
                       borderSide:
@@ -104,7 +104,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 AlwaysStoppedAnimation<Color>(Colors.white),
                           )
                         : const Text(
-                            'Prijava',
+                            'Login',
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.w800,
@@ -124,7 +124,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 TextButton(
                   onPressed: navigateToRegister,
-                  child: const Text('Še nimate računa? registracija',
+                  child: const Text(
+                      'You don' 't have and account? Registration',
                       style: TextStyle(color: Colors.black)),
                 ),
               ],
