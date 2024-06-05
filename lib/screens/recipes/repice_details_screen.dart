@@ -358,8 +358,7 @@ class RecipeSteps extends StatelessWidget {
           itemCount: (recipeData?['steps'] as List<dynamic>?)?.length ?? 0,
           itemBuilder: (context, index) {
             final steps = recipeData?['steps'] as List?;
-
-            final stepDescription = steps?[index]['steps'].toString();
+            final stepDescription = steps?[index].toString();
 
             return Container(
               margin: EdgeInsets.symmetric(vertical: 4.0),
