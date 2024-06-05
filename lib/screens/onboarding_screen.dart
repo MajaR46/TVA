@@ -44,10 +44,13 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                       });
                     },
                     itemBuilder: (context, index) {
-                      return OnboardContent(
-                        image: data[index].image,
-                        title: data[index].title,
-                        desc: data[index].desc,
+                      return Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: OnboardContent(
+                          image: data[index].image,
+                          title: data[index].title,
+                          desc: data[index].desc,
+                        ),
                       );
                     },
                   ),
@@ -89,13 +92,16 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                       );
                     }
                   },
-                  child: Text(
-                    _pageIndex == data.length - 1 ? 'Začni' : 'Naprej',
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w800,
-                      fontFamily: 'Poppins',
-                      color: Colors.white,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      _pageIndex == data.length - 1 ? 'Start' : 'Continue',
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w800,
+                        fontFamily: 'Poppins',
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                 ),
@@ -116,7 +122,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                   Navigator.of(context).pushReplacement(
                       MaterialPageRoute(builder: (context) => LoginScreen()));
                 },
-                child: const Text("Preskoči"),
+                child: const Text("Skip"),
               ),
             ),
           ],
@@ -159,18 +165,18 @@ class OnBoard {
 final List<OnBoard> data = [
   OnBoard(
     image: 'assets/images/boarding1.png',
-    title: 'Shranjujte',
-    desc: 'Shranite in organizirajte svoje najljubše recepte na enem mestu',
+    title: 'Store',
+    desc: 'Store and organise your favourite recipes in one place',
   ),
   OnBoard(
     image: 'assets/images/boarding2.png',
-    title: 'Delite',
-    desc: 'Svoje kuharske mojstrovine delite s prijatelji',
+    title: 'Share',
+    desc: 'Share your culinary masterpieces with your friends',
   ),
   OnBoard(
     image: 'assets/images/boarding3.png',
-    title: 'Uživajte',
-    desc: 'Okusite radosti kuhanja in odkrijte nove okuse ter recepte',
+    title: 'Enjoy',
+    desc: 'Tate the joys of cooking and discover new flavours and recipes',
   ),
 ];
 
