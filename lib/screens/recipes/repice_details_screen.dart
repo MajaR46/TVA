@@ -199,23 +199,26 @@ class RecipeNutrition extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(height: 8.0),
-        Row(
-          children: [
-            Expanded(
-              child: _buildNutritionBox(Icons.energy_savings_leaf_outlined,
-                  '${recipeData?['protein'] ?? 'N/A'} g'),
-            ),
-            SizedBox(width: 8.0),
-            Expanded(
-              child: _buildNutritionBox(Icons.local_pizza_outlined,
-                  '${recipeData?['carbohydrates'] ?? 'N/A'} g'),
-            ),
-            SizedBox(width: 8.0),
-            Expanded(
-              child: _buildNutritionBox(
-                  Icons.kitchen_outlined, '${recipeData?['fats'] ?? 'N/A'} g'),
-            ),
-          ],
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: [
+              _buildNutritionBox(
+                Icons.energy_savings_leaf_outlined,
+                '${recipeData?['protein'] ?? 'N/A'} g',
+              ),
+              SizedBox(width: 8.0),
+              _buildNutritionBox(
+                Icons.local_pizza_outlined,
+                '${recipeData?['carbohydrates'] ?? 'N/A'} g',
+              ),
+              SizedBox(width: 8.0),
+              _buildNutritionBox(
+                Icons.kitchen_outlined,
+                '${recipeData?['fats'] ?? 'N/A'} g',
+              ),
+            ],
+          ),
         ),
       ],
     );
@@ -227,13 +230,12 @@ class RecipeNutrition extends StatelessWidget {
         color: AppStyles.antiFlashWhite,
         borderRadius: BorderRadius.circular(8.0),
       ),
-      padding: EdgeInsets.symmetric(
-          vertical: 22.0, horizontal: 16.0), // Adjusted padding
+      padding: EdgeInsets.symmetric(vertical: 22.0, horizontal: 16.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(icon, color: AppStyles.ochre, size: 30.0),
-          SizedBox(width: 8.0), // Increased width
+          SizedBox(width: 8.0),
           Text(value, style: TextStyle(fontSize: 16.0)),
         ],
       ),
